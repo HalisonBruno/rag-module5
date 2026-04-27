@@ -53,6 +53,13 @@ def _rag_search(query: str, top_k: int = RAG_TOP_K, threshold: float = RAG_THRES
     embedding = _embed(query)
     result = _supabase.rpc(
         "search_documents",
+        {"query_embedding": embedding, "match_threshold": 0.1, "match_count": top_k}
+    ).execute()
+    print(f"[debug] RAG search returned {len(result.data or [])} chunks")
+    return result.data or []
+    embedding = _embed(query)
+    result = _supabase.rpc(
+        "search_documents",
         {"query_embedding": embedding, "match_threshold": threshold, "match_count": top_k}
     ).execute()
     return result.data or []
